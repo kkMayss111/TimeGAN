@@ -78,10 +78,10 @@ def timegan (ori_data, parameters):
   z_dim        = dim
   gamma        = 1
     
-  # Input place holders
-  X = tf.placeholder(tf.float32, [None, max_seq_len, dim], name = "myinput_x")
-  Z = tf.placeholder(tf.float32, [None, max_seq_len, z_dim], name = "myinput_z")
-  T = tf.placeholder(tf.int32, [None], name = "myinput_t")
+  # # Input place holders
+  # X = tf.placeholder(tf.float32, [None, max_seq_len, dim], name = "myinput_x")
+  # Z = tf.placeholder(tf.float32, [None, max_seq_len, z_dim], name = "myinput_z")
+  # T = tf.placeholder(tf.int32, [None], name = "myinput_t")
 
   def embedder (X, T):
     """Embedding network between original feature space to latent space.
@@ -302,9 +302,9 @@ def timegan (ori_data, parameters):
   print('Finish Joint Training')
     
   ## Synthetic data generation
-  Z_mb = random_generator(no, z_dim, ori_seq_len) 
-  generated_data_curr = sess.run(X_hat, feed_dict={Z: Z_mb, X: ori_data, T: ori_time})  
-      
+ Z_mb = random_generator(no, z_dim, ori_seq_len) 
+generated_data_curr = sess.run(X_hat, feed_dict={Z: Z_mb, X: ori_data, T: ori_time}))    
+    
   generated_data = list()
     
   for i in range(no):

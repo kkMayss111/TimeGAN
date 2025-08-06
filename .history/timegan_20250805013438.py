@@ -82,7 +82,7 @@ def timegan (ori_data, parameters):
   X = tf.placeholder(tf.float32, [None, max_seq_len, dim], name = "myinput_x")
   Z = tf.placeholder(tf.float32, [None, max_seq_len, z_dim], name = "myinput_z")
   T = tf.placeholder(tf.int32, [None], name = "myinput_t")
-
+  
   def embedder (X, T):
     """Embedding network between original feature space to latent space.
     
@@ -232,8 +232,7 @@ def timegan (ori_data, parameters):
     
   for itt in range(iterations):
     # Set mini-batch
-    X_mb, T_mb = batch_generator(ori_data, ori_time, batch_size)     
-    actual_batch_size = len(X_mb)      
+    X_mb, T_mb = batch_generator(ori_data, ori_time, batch_size)           
     # Train embedder        
     _, step_e_loss = sess.run([E0_solver, E_loss_T0], feed_dict={X: X_mb, T: T_mb})        
     # Checkpoint
@@ -251,8 +250,7 @@ def timegan (ori_data, parameters):
     # Random vector generation   
     # Z_mb = random_generator(batch_size, z_dim, T_mb, max_seq_len)
     # Use the new simplified random_generator
-    actual_batch_size = len(X_mb)
-    Z_mb = random_generator(actual_batch_size, z_dim, ori_seq_len) 
+    Z_mb = random_generator(batch_size, z_dim, ori_seq_len)
     # Train generator       
     _, step_g_loss_s = sess.run([GS_solver, G_loss_S], feed_dict={Z: Z_mb, X: X_mb, T: T_mb})       
     # Checkpoint
@@ -266,25 +264,25 @@ def timegan (ori_data, parameters):
   
   for itt in range(iterations):
     # Generator training (twice more than discriminator training)
-    for kk in range(2):
+    for kk in range(4):
       # Set mini-batch
-      X_mb, T_mb = batch_generator(ori_data, ori_time, batch_size)
-      # ADD THIS LINE: Get the actual size of the mini-batch
-      actual_batch_size = len(X_mb)
+      X_mb, T_mb = batch_generator(ori_data, ori_time, batch_size)               
       # Random vector generation
-      Z_mb = random_generator(actual_batch_size, z_dim, ori_seq_len) # USE THE ACTUAL BATCH SIZE
+      # Z_mb = random_generator(batch_size, z_dim, T_mb, max_seq_len)
+      # Use the new simplified random_generator again# Use the new simplified random_generator again
+Z_mb = random_generator(batch_size, z_dim, ori_seq_len)
       # Train generator
       _, step_g_loss_u, step_g_loss_s, step_g_loss_v = sess.run([G_solver, G_loss_U, G_loss_S, G_loss_V], feed_dict={Z: Z_mb, X: X_mb, T: T_mb})
-      # Train embedder
-      _, step_e_loss_t0 = sess.run([E_solver, E_loss_T0], feed_dict={Z: Z_mb, X: X_mb, T: T_mb})
-
+       # Train embedder        
+      _, step_e_loss_t0 = sess.run([E_solver, E_loss_T0], feed_dict={Z: Z_mb, X: X_mb, T: T_mb})   
+           
     # Discriminator training        
     # Set mini-batch
-    X_mb, T_mb = batch_generator(ori_data, ori_time, batch_size)
-    # ADD THIS LINE: Get the actual size of the mini-batch
-    actual_batch_size = len(X_mb)
+    X_mb, T_mb = batch_generator(ori_data, ori_time, batch_size)           
     # Random vector generation
-    Z_mb = random_generator(actual_batch_size, z_dim, ori_seq_len) # USE THE ACTUAL BATCH SIZE
+    # Z_mb = random_generator(batch_size, z_dim, T_mb, max_seq_len)
+    # Use the new simplified random_generator again
+    Z_mb = random_generator(batch_size, z_dim, ori_seq_len)
     # Check discriminator loss before updating
     check_d_loss = sess.run(D_loss, feed_dict={X: X_mb, T: T_mb, Z: Z_mb})
     # Train discriminator (only when the discriminator does not work well)
@@ -302,9 +300,9 @@ def timegan (ori_data, parameters):
   print('Finish Joint Training')
     
   ## Synthetic data generation
-  Z_mb = random_generator(no, z_dim, ori_seq_len) 
-  generated_data_curr = sess.run(X_hat, feed_dict={Z: Z_mb, X: ori_data, T: ori_time})  
-      
+  Z_mb = random_generator(no, z_dim, ori_time, max_seq_len)
+  generated_data_curr = sess.run(X_hat, feed_dict={Z: Z_mb, X: ori_data, T: ori_time})    
+    
   generated_data = list()
     
   for i in range(no):

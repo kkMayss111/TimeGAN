@@ -124,23 +124,7 @@ def rnn_cell(module_name, hidden_dim):
 #     Z_mb.append(temp_Z)
 #   return Z_mb
 
-# In utils.py
 
-def random_generator (batch_size, z_dim, seq_len):
-  """Random vector generation.
-  
-  Args:
-    - batch_size: size of the random vector
-    - z_dim: dimension of random vector
-    - seq_len: sequence length of the vector
-    
-  Returns:
-    - Z_mb: generated random vector
-  """
-  # All our sequences have the same length (seq_len), so we can generate
-  # the noise for the whole batch in one go.
-  Z_mb = np.random.uniform(0., 1, [batch_size, seq_len, z_dim])
-  return Z_mb
 
 def batch_generator(data, time, batch_size):
   """Mini-batch generator.

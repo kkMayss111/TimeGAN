@@ -212,38 +212,3 @@ def sine_data_generation (no, seq_len, dim):
 #     data.append(temp_data[idx[i]])
     
 #   return data
-
-def real_data_loading(data_name, seq_len):
-    """
-    Loads data for a SINGLE city, scales it, and saves the scaler.
-    """
-    # The data_name will now be something like "Beirut" or "Tripoli"
-    file_name = f'data/{data_name}_data.csv'
-    
-    try:
-        df = pd.read_csv(file_name)
-    except FileNotFoundError:
-        print(f"Error: {file_name} not found.")
-        return None
-        
-    ori_data = df.values
-    
-    # Normalize and get min/max values
-    ori_data, min_val, max_val = MinMaxScaler(ori_data)
-    
-    # Save the city-specific scaler values
-    np.savez(f'min_max_{data_name}.npz', min_val=min_val, max_val=max_val)
-    print(f"-> Min/max values saved to min_max_{data_name}.npz")
-
-    # Prepare sequences (this part is the same as before)
-    temp_data = []
-    for i in range(0, len(ori_data) - seq_len + 1):
-        _x = ori_data[i:i + seq_len]
-        temp_data.append(_x)
-
-    idx = np.random.permutation(len(temp_data))
-    data = []
-    for i in range(len(temp_data)):
-        data.append(temp_data[idx[i]])
-
-    return data

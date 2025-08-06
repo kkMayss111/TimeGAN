@@ -78,10 +78,10 @@ def timegan (ori_data, parameters):
   z_dim        = dim
   gamma        = 1
     
-  # Input place holders
-  X = tf.placeholder(tf.float32, [None, max_seq_len, dim], name = "myinput_x")
-  Z = tf.placeholder(tf.float32, [None, max_seq_len, z_dim], name = "myinput_z")
-  T = tf.placeholder(tf.int32, [None], name = "myinput_t")
+  # # Input place holders
+  # X = tf.placeholder(tf.float32, [None, max_seq_len, dim], name = "myinput_x")
+  # Z = tf.placeholder(tf.float32, [None, max_seq_len, z_dim], name = "myinput_z")
+  # T = tf.placeholder(tf.int32, [None], name = "myinput_t")
 
   def embedder (X, T):
     """Embedding network between original feature space to latent space.
@@ -164,8 +164,8 @@ def timegan (ori_data, parameters):
     return Y_hat   
     
   # Embedder & Recovery
-  H = embedder(X, T)
-  X_tilde = recovery(H, T)
+    H = embedder(X, T)
+    X_tilde = recovery(H, T)
     
   # Generator
   E_hat = generator(Z, T)

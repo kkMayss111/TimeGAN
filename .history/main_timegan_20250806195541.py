@@ -110,12 +110,13 @@ if __name__ == '__main__':
   # Inputs for the main function
   parser = argparse.ArgumentParser()
   
- 
+  # === THIS IS THE SECOND FIX ===
+  # We remove the 'choices' restriction to allow any city name.
   parser.add_argument(
       '--data_name',
       default='Tripoli', # Set a default city for easy testing
       type=str)
-  
+  # ==============================
   
   parser.add_argument(
       '--seq_len',

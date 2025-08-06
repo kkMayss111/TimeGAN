@@ -52,7 +52,7 @@ def main (args):
     ori_data = sine_data_generation(no, args.seq_len, dim)
   else: # This will now correctly handle 'Beirut', 'Tripoli', etc.
     ori_data = real_data_loading(args.data_name, args.seq_len)
-
+  # ============================
       
   print(args.data_name + ' dataset is ready.')
     
@@ -110,12 +110,13 @@ if __name__ == '__main__':
   # Inputs for the main function
   parser = argparse.ArgumentParser()
   
- 
+  # === THIS IS THE SECOND FIX ===
+  # We remove the 'choices' restriction to allow any city name.
   parser.add_argument(
       '--data_name',
       default='Tripoli', # Set a default city for easy testing
       type=str)
-  
+  # ==============================
   
   parser.add_argument(
       '--seq_len',

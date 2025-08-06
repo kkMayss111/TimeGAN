@@ -124,23 +124,26 @@ def rnn_cell(module_name, hidden_dim):
 #     Z_mb.append(temp_Z)
 #   return Z_mb
 
-# In utils.py
+pat.v1.global_variables_initializer instead.
 
-def random_generator (batch_size, z_dim, seq_len):
-  """Random vector generation.
-  
-  Args:
-    - batch_size: size of the random vector
-    - z_dim: dimension of random vector
-    - seq_len: sequence length of the vector
-    
-  Returns:
-    - Z_mb: generated random vector
-  """
-  # All our sequences have the same length (seq_len), so we can generate
-  # the noise for the whole batch in one go.
-  Z_mb = np.random.uniform(0., 1, [batch_size, seq_len, z_dim])
-  return Z_mb
+Start Embedding Network Training
+step: 0/5000, e_loss: 0.2641
+step: 1000/5000, e_loss: 0.1761
+step: 2000/5000, e_loss: 0.1663
+step: 3000/5000, e_loss: 0.1353
+step: 4000/5000, e_loss: 0.0716
+Finish Embedding Network Training
+Start Training with Supervised Loss Only
+Traceback (most recent call last):
+  File "c:/Users/user/Documents/ML models/TimeGAN/TimeGAN/main_timegan.py", line 296, in <module>
+    ori_data, generated_data, metrics = main(args)
+  File "c:/Users/user/Documents/ML models/TimeGAN/TimeGAN/main_timegan.py", line 206, in main
+    generated_data = timegan(ori_data, parameters)
+  File "c:\Users\user\Documents\ML models\TimeGAN\TimeGAN\timegan.py", line 250, in timegan
+    Z_mb = random_generator(batch_size, z_dim, T_mb, max_seq_len)
+  File "c:\Users\user\Documents\ML models\TimeGAN\TimeGAN\utils.py", line 122, in random_generator
+    temp_Z = np.random.uniform(0., 1, [T_mb[i], z_dim])
+IndexError: list index out of range
 
 def batch_generator(data, time, batch_size):
   """Mini-batch generator.

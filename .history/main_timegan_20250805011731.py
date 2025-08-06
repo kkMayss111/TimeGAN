@@ -40,24 +40,39 @@ from metrics.discriminative_metrics import discriminative_score_metrics
 from metrics.predictive_metrics import predictive_score_metrics
 from metrics.visualization_metrics import visualization
 
+
 def main (args):
-  """Main function for timeGAN experiments."""
+  """Main function for timeGAN experiments.
   
+  Args:
+    - data_name: sine, stock, or energy
+    - seq_len: sequence length
+    - Network parameters (should be optimized for different datasets)
+      - module: gru, lstm, or lstmLN
+      - hidden_dim: hidden dimensions
+      - num_layer: number of layers
+      - iteration: number of training iterations
+      - batch_size: the number of samples in each batch
+    - metric_iteration: number of iterations for metric computation
+  
+  Returns:
+    - ori_data: original data
+    - generated_data: generated synthetic data
+    - metric_results: discriminative and predictive scores
+  """
   ## Data loading
-  
-  # We simplify the logic to handle 'sine' or any other real data name.
-  if args.data_name == 'sine':
+  # if args.data_name in ['stock', 'energy', 'transaction']:
+  if args.data_name in ['stock', 'energy', 'transaction']:
+    ori_data = real_data_loading(args.data_name, args.seq_len)
+  elif args.data_name == 'sine':
     # Set number of samples and its dimensions
     no, dim = 10000, 5
     ori_data = sine_data_generation(no, args.seq_len, dim)
-  else: # This will now correctly handle 'Beirut', 'Tripoli', etc.
-    ori_data = real_data_loading(args.data_name, args.seq_len)
-
       
   print(args.data_name + ' dataset is ready.')
     
   ## Synthetic data generation by TimeGAN
-  # Set network parameters
+  # Set newtork parameters
   parameters = dict()  
   parameters['module'] = args.module
   parameters['hidden_dim'] = args.hidden_dim
@@ -95,32 +110,36 @@ def main (args):
   ## Print discriminative and predictive scores
   print(metric_results)
 
-  # Reshape and save the data
   stacked_data = np.asarray(generated_data)
+
+  # Reshape the 3D array to a 2D array: (num_samples * seq_len, num_features)
   num_samples, seq_len, num_features = stacked_data.shape
   reshaped_data = stacked_data.reshape(num_samples * seq_len, num_features)
 
-  pd.DataFrame(reshaped_data).to_csv('{city}_synthetic_data.csv', index=False)
-  print("Synthetic data saved to {city}_synthetic_data.csv")
+  # 2. Save to a CSV file using pandas
+  # This creates a file named 'synthetic_data.csv' in your project folder.
+  pd.DataFrame(reshaped_data).to_csv('synthetic_data.csv', index=False)
+
+  print("Synthetic data saved to synthetic_data.csv")
+  # ----------------------------------------
 
   return ori_data, generated_data, metric_results
+
+
 
 if __name__ == '__main__':  
   
   # Inputs for the main function
   parser = argparse.ArgumentParser()
-  
- 
   parser.add_argument(
       '--data_name',
-      default='Tripoli', # Set a default city for easy testing
+      choices=['sine','stock','energy', 'transaction'],
+      default='transaction',  # <--- TO THIS
       type=str)
-  
-  
   parser.add_argument(
       '--seq_len',
       help='sequence length',
-      default=24, # A good starting point for optimization
+      default=24 ,
       type=int)
   parser.add_argument(
       '--module',
@@ -135,17 +154,17 @@ if __name__ == '__main__':
   parser.add_argument(
       '--num_layer',
       help='number of layers (should be optimized)',
-      default=3,
+      default=3 ,
       type=int)
   parser.add_argument(
       '--iteration',
       help='Training iterations (should be optimized)',
-      default=5000, # A good number for initial quality tests
+      default=5000,
       type=int)
   parser.add_argument(
       '--batch_size',
       help='the number of samples in mini-batch (should be optimized)',
-      default=128, # Try a different batch size
+      default=64,
       type=int)
   parser.add_argument(
       '--metric_iteration',
@@ -155,3 +174,6 @@ if __name__ == '__main__':
   
   args = parser.parse_args() 
   ori_data, generated_data, metrics = main(args)
+
+  
+  # Calls main function  
